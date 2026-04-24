@@ -1,4 +1,4 @@
-import { scaleLinear } from "d3-scale";
+import { scaleLinear, scaleLog } from "d3-scale";
 import { format } from "d3-format";
 import { ColorLegendElement } from "./color-legend-element";
 import { ScaleQuantize, XScale } from "./types";
@@ -24,6 +24,11 @@ export class AxisTicksSetter {
     switch (scaleType) {
       case "continuous":
         this.xScale = scaleLinear()
+          .domain(this.cle.domain as number[])
+          .range([marginLeft, width - marginRight]);
+        break;
+      case "log10":
+        this.xScale = scaleLog()
           .domain(this.cle.domain as number[])
           .range([marginLeft, width - marginRight]);
         break;
