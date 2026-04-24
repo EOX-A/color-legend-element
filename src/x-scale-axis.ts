@@ -30,7 +30,8 @@ export class AxisTicksSetter {
       case "log10":
         this.xScale = scaleLog()
           .domain(this.cle.domain as number[])
-          .range([marginLeft, width - marginRight]);
+          .range([marginLeft, width - marginRight])
+          .nice();
         break;
       case "discrete":
       case "threshold":
@@ -55,7 +56,9 @@ export class AxisTicksSetter {
    * Handles setting the tickFormatter function
    */
   handleAxisTicks() {
-    if (
+    if (this.cle.scaleType === "log10" && !this.cle.tickValues) {
+      this.cle.tickValues = this.xScale.ticks(this.cle.ticks || DEFAULT_TICKS);
+    } else if (
       (this.cle.scaleType === "discrete" ||
         this.cle.scaleType === "threshold") &&
       !this.cle.tickValues
@@ -72,7 +75,7 @@ export class AxisTicksSetter {
     // TODO: how to override `tickFormat` after tickFormatter has previously been set and is already a function?
     if (typeof this.cle.tickFormatter === "function") {
       return;
-    } else if (this.cle.tickFormat?.length) {
+    } else if (this.cle.tickFormat?.length && this.cle.scaleType !== "log10") {
       // else prefer `tickFormat` attribute / property if it has been set
       this.cle.tickFormatter = format(this.cle.tickFormat);
     } else {
